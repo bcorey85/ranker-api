@@ -8,10 +8,18 @@ const register = async (req, res) => {
 	try {
 		const newUser = new User({ username, email, password });
 		await newUser.save();
+
+		const user = await User.login(email, password);
+		const payload = {
+			id: user._id,
+			token: user.token
+		};
+
 		return StatusResponse(
 			res,
 			201,
-			'Your account has been created successfully'
+			'Your account has been created successfully',
+			payload
 		);
 	} catch (error) {
 		if (error.errors) {
@@ -36,12 +44,12 @@ const login = async (req, res) => {
 			return StatusResponse(res, 401);
 		}
 
-		const response = {
+		const payload = {
 			id: user._id,
 			token: user.token
 		};
 
-		return StatusResponse(res, 200, response);
+		return StatusResponse(res, 200, 'Login successful', payload);
 	} catch (error) {
 		console.log(error);
 		return StatusResponse(res, 500);
@@ -55,7 +63,11 @@ const forgotPassword = async (req, res) => {
 		const user = await User.findOne({ email });
 
 		if (!user) {
-			return StatusResponse(res, 404, 'Unable to locate email.');
+			return StatusResponse(
+				res,
+				404,
+				'An error occurred while trying to complete this request.'
+			);
 		}
 
 		await sendPasswordResetEmail('bcorey85@gmail.com', 12345);

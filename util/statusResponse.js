@@ -1,35 +1,25 @@
-const StatusResponse = (res, code, payload) => {
-	let response;
+const StatusResponse = (res, code, message, payload) => {
+	let response = {
+		success: null,
+		message,
+		payload
+	};
 	if (code === 401) {
-		response = {
-			success: false,
-			payload: 'Please check your login credentials.'
-		};
+		response.success = false;
+		response.message = 'Please check your login credentials.' || message;
 	} else if (code === 403) {
-		response = {
-			success: false,
-			payload: 'You are not authorized to access this resource.'
-		};
+		response.success = false;
+		response.message =
+			'You are not authorized to access this resource.' || message;
 	} else if (code === 500) {
-		response = {
-			success: false,
-			payload: 'An unknown server error occured. Please try again later.'
-		};
+		response.success = false;
+		response.message =
+			'An unknown server error occurred. Please try again later.' ||
+			message;
 	} else if (code.toString()[0] === '2') {
-		response = {
-			success: true,
-			payload
-		};
+		response.success = true;
 	} else if (code.toString()[0] === '4') {
-		response = {
-			success: false,
-			payload
-		};
-	} else {
-		response = {
-			success: null,
-			payload
-		};
+		response.success = false;
 	}
 
 	return res.status(code).send(response);
