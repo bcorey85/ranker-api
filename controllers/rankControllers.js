@@ -3,11 +3,11 @@ const User = require('../models/User');
 const StatusResponse = require('../util/statusResponse');
 
 const createRankForm = async (req, res) => {
-	const newForm = req.body.form;
+	const newForm = req.body;
 
 	try {
-		if (!newForm) {
-			StatusResponse(res, 400, 'Please submit a form to save.');
+		if (!newForm.items || !newForm.items.length > 0) {
+			return StatusResponse(res, 400, 'Please submit a form to save.');
 		}
 
 		const form = await new RankForm(req.body);
@@ -19,11 +19,11 @@ const createRankForm = async (req, res) => {
 		user.rankForms.push(form);
 		await user.save();
 
-		StatusResponse(res, 201, 'Form saved successfully.');
+		return StatusResponse(res, 201, 'Form saved successfully.');
 	} catch (error) {
 		console.log(error);
 
-		StatusResponse(res, 500);
+		return StatusResponse(res, 500);
 	}
 };
 
