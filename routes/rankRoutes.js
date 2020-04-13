@@ -7,7 +7,9 @@ const {
 	deleteRankForm
 } = require('../controllers/rankControllers');
 
-router.route('/').post(createRankForm);
+const userAuth = require('../middleware/userAuth');
+
+router.route('/').post(userAuth, createRankForm);
 
 router
 	.route('/:rankFormId')

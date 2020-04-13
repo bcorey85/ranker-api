@@ -6,16 +6,16 @@ const StatusResponse = (res, code, message, payload) => {
 	};
 	if (code === 401) {
 		response.success = false;
-		response.message = 'Please check your login credentials.' || message;
+		response.message = message || 'Please check your login credentials.';
 	} else if (code === 403) {
 		response.success = false;
 		response.message =
-			'You are not authorized to access this resource.' || message;
+			message || 'You are not authorized to access this resource.';
 	} else if (code === 500) {
 		response.success = false;
 		response.message =
-			'An unknown server error occurred. Please try again later.' ||
-			message;
+			message ||
+			'An unknown server error occurred. Please try again later.';
 	} else if (code.toString()[0] === '2') {
 		response.success = true;
 	} else if (code.toString()[0] === '4') {

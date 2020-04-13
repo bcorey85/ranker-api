@@ -60,16 +60,19 @@ userSchema.statics.login = async function(email, password) {
 };
 
 // Hash user password before save
-userSchema.pre('save', async function() {
-	if (!this.isModified('password')) {
-		next();
+userSchema.pre('save', async function(next) {
+	const user = this;
+
+	if (user.isModified('password')) {
+		try {
+			const hashed = await bcrypt.hash(user.password, 10);
+			user.password = hashed;
+		} catch (error) {
+			console.log(error);
+		}
 	}
-	try {
-		const hashed = await bcrypt.hash(this.password, 10);
-		this.password = hashed;
-	} catch (error) {
-		console.log(error);
-	}
+
+	next();
 });
 
 const User = mongoose.model('User', userSchema);

@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const scoreSchema = new mongoose.Schema({
+	id: String,
+	label: String,
+	score: Number
+});
+
 const itemSchema = new mongoose.Schema({
 	id: String,
 	label: String,
@@ -24,3 +30,6 @@ const rankFormSchema = new mongoose.Schema({
 		enum: [ 'asc', 'desc' ]
 	}
 });
+
+const RankForm = new mongoose.model('RankForm', rankFormSchema);
+module.exports = RankForm;
