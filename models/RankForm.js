@@ -22,6 +22,17 @@ const scoreLabelSchema = new mongoose.Schema({
 });
 
 const rankFormSchema = new mongoose.Schema({
+	date: {
+		type: Date,
+		required: [ true, 'Please add a date to your form.' ]
+	},
+	title: {
+		type: String,
+		required: [ true, 'Please add a title to your form.' ]
+	},
+	category: {
+		type: String
+	},
 	items: [ itemSchema ],
 	scoreLabels: [ scoreLabelSchema ],
 	overallAverage: Number,

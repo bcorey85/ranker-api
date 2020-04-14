@@ -45,7 +45,12 @@ const updateUser = async (req, res) => {
 
 		await user.save();
 
-		return StatusResponse(res, 200, 'User details updated successfully.');
+		return StatusResponse(
+			res,
+			200,
+			'User details updated successfully.',
+			user
+		);
 	} catch (error) {
 		if (error.code === 11000) {
 			return StatusResponse(
