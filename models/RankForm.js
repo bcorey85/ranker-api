@@ -23,7 +23,7 @@ const scoreLabelSchema = new mongoose.Schema({
 
 const rankFormSchema = new mongoose.Schema({
 	date: {
-		type: Date,
+		type: String,
 		required: [ true, 'Please add a date to your form.' ]
 	},
 	title: {
