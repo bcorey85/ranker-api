@@ -29,7 +29,27 @@ const register = async (req, res) => {
 			});
 			return StatusResponse(res, 400, messages);
 		}
-		console.log(error);
+
+		if (error.code === 11000) {
+			const usernameError = error.errmsg.match(/username/);
+			const emailError = error.errmsg.match(/email/);
+
+			if (usernameError) {
+				return StatusResponse(
+					res,
+					400,
+					'That username is taken, please try another one.'
+				);
+			}
+
+			if (emailError) {
+				return StatusResponse(
+					res,
+					400,
+					'A user exists with that email, please try another one.'
+				);
+			}
+		}
 		return StatusResponse(res, 500);
 	}
 };

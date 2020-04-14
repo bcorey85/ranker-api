@@ -20,7 +20,44 @@ const getUserById = async (req, res) => {
 	}
 };
 
-const updateUser = (req, res) => {};
+const updateUser = async (req, res) => {
+	const update = req.body.inputState;
+	const userId = req.params.userId;
+
+	try {
+		const user = await User.findOne({ _id: userId });
+
+		if (update.password && update.password.length < 6) {
+			return StatusResponse(
+				res,
+				400,
+				'Password must be at least 6 characters.'
+			);
+		}
+
+		if (update.password) {
+			user.password = update.password;
+		}
+
+		if (update.email) {
+			user.email = update.email;
+		}
+
+		await user.save();
+
+		return StatusResponse(res, 200, 'User details updated successfully.');
+	} catch (error) {
+		if (error.code === 11000) {
+			return StatusResponse(
+				res,
+				400,
+				'A user exists with that email, please try another one.'
+			);
+		}
+
+		return StatusResponse(res, 500);
+	}
+};
 
 module.exports = {
 	getUserById,

@@ -11,13 +11,21 @@ const categorySchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
 	username: {
 		type: String,
-		required: [ true, 'Please enter a username' ]
+		required: [ true, 'Please enter a username' ],
+		unique: true,
+		index: true,
+		trim: true
 	},
 	email: {
 		type: String,
 		required: [ true, 'Please enter a valid email.' ],
 		unique: true,
-		index: true
+		index: true,
+		trim: true,
+		match: [
+			/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+			'Please enter a valid email.'
+		]
 	},
 	password: {
 		type: String,
@@ -25,6 +33,7 @@ const userSchema = new mongoose.Schema({
 			true,
 			'Please enter a password with at least 6 characters.'
 		],
+		trim: true,
 		minlength: [ 6, 'Please enter a password with at least 6 characters.' ],
 		select: false
 	},
