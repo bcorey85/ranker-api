@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const dbConnect = async () => {
 	try {
-		await mongoose.connect('mongodb://localhost/ranker', {
+		await mongoose.connect(process.env.MONGODB_URL, {
 			useNewUrlParser: true,
 			useCreateIndex: true,
 			useFindAndModify: false,
