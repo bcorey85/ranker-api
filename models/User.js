@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const categorySchema = new mongoose.Schema({
 	category: {
@@ -38,7 +39,13 @@ const userSchema = new mongoose.Schema({
 		select: false
 	},
 	categories: [ categorySchema ],
-	rankForms: [ { type: mongoose.Types.ObjectId, ref: 'RankForm' } ]
+	rankForms: [ { type: mongoose.Types.ObjectId, ref: 'RankForm' } ],
+	resetPasswordToken: String,
+	resetPasswordExpire: Date,
+	createdAt: {
+		type: Date,
+		default: Date.now
+	}
 });
 
 userSchema.methods.generateAuthToken = async function() {
@@ -83,6 +90,21 @@ userSchema.pre('save', async function(next) {
 
 	next();
 });
+
+userSchema.methods.generateResetPasswordToken = function() {
+	// Gen random 32 byte Buffer and change to hexidecimal
+	const resetToken = crypto.randomBytes(32).toString('hex');
+
+	//Set engrypted resetToken on user model
+	this.resetPasswordToken = crypto
+		.createHash('sha256')
+		.update(resetToken)
+		.digest('hex');
+	// 10 minutes
+	this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+	return resetToken;
+};
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

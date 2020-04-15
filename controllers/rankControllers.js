@@ -28,7 +28,6 @@ const createRankForm = async (req, res) => {
 			const messages = errors.map(e => {
 				return error.errors[e].message;
 			});
-			console.log(messages);
 
 			return StatusResponse(res, 400, messages);
 		}

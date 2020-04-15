@@ -39,6 +39,10 @@ const rankFormSchema = new mongoose.Schema({
 	sort: {
 		type: String,
 		enum: [ 'asc', 'desc' ]
+	},
+	createdAt: {
+		type: Date,
+		default: Date.now
 	}
 });
 

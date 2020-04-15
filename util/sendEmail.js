@@ -4,8 +4,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const adminEmailAccount = process.env.ADMIN_EMAIL;
 
-const sendPasswordResetEmail = async (email, resetToken) => {
-	const resetLink = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
+const sendPasswordResetEmail = async (email, resetLink) => {
 	const msg = {
 		to: email,
 		from: `Ranker App <${adminEmailAccount}>`,
