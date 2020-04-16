@@ -10,11 +10,19 @@ const getUserById = async (req, res) => {
 			model: 'RankForm'
 		});
 
+		const categories = [
+			...new Set(user.rankForms.map(form => form.category))
+		];
+
 		if (!user) {
 			return StatusResponse(res, 404, 'Unable to locate user.');
 		}
+		const response = {
+			user,
+			categories
+		};
 
-		return StatusResponse(res, 200, 'User data', user);
+		return StatusResponse(res, 200, 'User data', response);
 	} catch (error) {
 		return StatusResponse(res, 500);
 	}

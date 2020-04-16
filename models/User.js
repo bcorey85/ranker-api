@@ -3,12 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
-const categorySchema = new mongoose.Schema({
-	category: {
-		type: String
-	}
-});
-
 const userSchema = new mongoose.Schema({
 	username: {
 		type: String,
@@ -38,7 +32,6 @@ const userSchema = new mongoose.Schema({
 		minlength: [ 6, 'Please enter a password with at least 6 characters.' ],
 		select: false
 	},
-	categories: [ categorySchema ],
 	rankForms: [ { type: mongoose.Types.ObjectId, ref: 'RankForm' } ],
 	resetPasswordToken: String,
 	resetPasswordExpire: Date,
