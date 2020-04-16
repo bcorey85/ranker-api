@@ -3,7 +3,7 @@ const User = require('../models/User');
 const StatusResponse = require('../util/statusResponse');
 
 const createRankForm = async (req, res) => {
-	const newForm = req.body.form;
+	const newForm = req.body;
 
 	try {
 		if (!newForm.items || !newForm.items.length > 0) {
@@ -38,9 +38,39 @@ const createRankForm = async (req, res) => {
 
 const getRankFormById = (req, res) => {};
 
-const updateRankForm = (req, res) => {};
+const updateRankForm = async (req, res) => {
+	const formUpdate = req.body;
+	const { rankFormId } = req.params;
 
-const deleteRankForm = (req, res) => {};
+	try {
+		const form = await RankForm.findOneAndUpdate(
+			{ _id: rankFormId },
+			formUpdate
+		);
+
+		return StatusResponse(res, 200, 'Form updated successfully.');
+	} catch (error) {
+		return StatusResponse(res, 500);
+	}
+};
+
+const deleteRankForm = async (req, res) => {
+	const { rankFormId } = req.params;
+
+	try {
+		const form = await RankForm.findOne({ _id: rankFormId });
+		const user = await User.findOne({ _id: req.user.id });
+		user.rankForms = user.rankForms.filter(
+			formId => formId.toString() !== rankFormId.toString()
+		);
+		await user.save();
+		await form.remove();
+
+		return StatusResponse(res, 200, 'Form deleted successfully');
+	} catch (error) {
+		return StatusResponse(res, 500);
+	}
+};
 
 module.exports = {
 	createRankForm,

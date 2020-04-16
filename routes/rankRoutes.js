@@ -13,8 +13,8 @@ router.route('/').post(userAuth, createRankForm);
 
 router
 	.route('/:rankFormId')
-	.get(getRankFormById)
-	.put(updateRankForm)
-	.delete(deleteRankForm);
+	.get(userAuth, getRankFormById)
+	.put(userAuth, updateRankForm)
+	.delete(userAuth, deleteRankForm);
 
 module.exports = router;
