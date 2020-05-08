@@ -84,11 +84,7 @@ const forgotPassword = async (req, res) => {
 		const user = await User.findOne({ email });
 
 		if (!user) {
-			return StatusResponse(
-				res,
-				404,
-				'An error occurred while trying to complete this request.'
-			);
+			return StatusResponse(res, 404, 'Please check the provided email.');
 		}
 		const resetToken = user.generateResetPasswordToken();
 		await user.save();
@@ -124,7 +120,11 @@ const resetPassword = async (req, res) => {
 		});
 
 		if (!user) {
-			return StatusResponse(res, 400, 'Invalid request.');
+			return StatusResponse(
+				res,
+				400,
+				'Invalid request. Please request a new password reset email.'
+			);
 		}
 
 		user.password = password;
