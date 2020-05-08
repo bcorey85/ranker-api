@@ -4,6 +4,9 @@ const StatusResponse = require('../util/statusResponse');
 
 const createRankForm = async (req, res) => {
 	const newForm = req.body;
+	if (!newForm.category) {
+		newForm.category = 'Misc';
+	}
 
 	try {
 		if (!newForm.items || !newForm.items.length > 0) {
@@ -42,14 +45,27 @@ const updateRankForm = async (req, res) => {
 	const formUpdate = req.body;
 	const { rankFormId } = req.params;
 
+	if (!formUpdate.category) {
+		formUpdate.category = 'Misc';
+	}
+
 	try {
-		const form = await RankForm.findOneAndUpdate(
-			{ _id: rankFormId },
-			formUpdate
-		);
+		await RankForm.findOneAndUpdate({ _id: rankFormId }, formUpdate, {
+			runValidators: true
+		});
 
 		return StatusResponse(res, 200, 'Form updated successfully.');
 	} catch (error) {
+		console.log(error);
+		if (error.errors) {
+			const errors = Object.keys(error.errors);
+			const messages = errors.map(e => {
+				return error.errors[e].message;
+			});
+
+			return StatusResponse(res, 400, messages);
+		}
+
 		return StatusResponse(res, 500);
 	}
 };
