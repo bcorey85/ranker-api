@@ -72,7 +72,22 @@ const updateUser = async (req, res) => {
 	}
 };
 
+const deleteUser = async (req, res) => {
+	const userId = req.params.userId;
+
+	try {
+		const user = await User.findOne({ _id: userId });
+
+		await RankForm.deleteMany({ _id: { $in: user.rankForms } });
+		await user.deleteOne();
+		return StatusResponse(res, 200, 'User deleted successfully.');
+	} catch (error) {
+		return StatusResponse(res, 500);
+	}
+};
+
 module.exports = {
 	getUserById,
-	updateUser
+	updateUser,
+	deleteUser
 };
