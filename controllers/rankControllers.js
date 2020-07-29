@@ -44,7 +44,6 @@ const getRankFormById = (req, res) => {};
 const updateRankForm = async (req, res) => {
 	const formUpdate = req.body;
 	const { rankFormId } = req.params;
-	console.log(formUpdate);
 
 	if (!formUpdate.category) {
 		formUpdate.category = 'Misc';

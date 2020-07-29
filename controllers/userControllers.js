@@ -50,6 +50,7 @@ const updateUser = async (req, res) => {
 		if (update.email) {
 			user.email = update.email;
 		}
+		console.log(user);
 
 		await user.save();
 
