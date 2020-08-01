@@ -6,10 +6,12 @@ const {
 	deleteUser
 } = require('../controllers/userControllers');
 
+const { userRoute } = require('./routeStrings');
+
 const userAuth = require('../middleware/userAuth');
 
 router
-	.route('/:userId')
+	.route(userRoute.userId)
 	.get(userAuth, getUserById)
 	.put(userAuth, updateUser)
 	.delete(userAuth, deleteUser);

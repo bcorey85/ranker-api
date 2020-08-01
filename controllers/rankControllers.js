@@ -1,6 +1,7 @@
 const RankForm = require('../models/RankForm');
 const User = require('../models/User');
 const StatusResponse = require('../util/statusResponse');
+const { formErrorMessage, formSuccessMessage } = require('./responseStrings');
 
 const createRankForm = async (req, res) => {
 	const newForm = req.body;
@@ -10,7 +11,7 @@ const createRankForm = async (req, res) => {
 
 	try {
 		if (!newForm.items || !newForm.items.length > 0) {
-			return StatusResponse(res, 400, 'Please submit a form to save.');
+			return StatusResponse(res, 400, formErrorMessage.formMissingError);
 		}
 
 		const form = await new RankForm(newForm);
@@ -22,7 +23,7 @@ const createRankForm = async (req, res) => {
 		user.rankForms.push(form);
 		await user.save();
 
-		return StatusResponse(res, 201, 'Form saved successfully.');
+		return StatusResponse(res, 201, formSuccessMessage.formSaveSuccess);
 	} catch (error) {
 		console.log(error);
 
@@ -54,7 +55,7 @@ const updateRankForm = async (req, res) => {
 			runValidators: true
 		});
 
-		return StatusResponse(res, 200, 'Form updated successfully.');
+		return StatusResponse(res, 200, formSuccessMessage.formUpdateSuccess);
 	} catch (error) {
 		console.log(error);
 		if (error.errors) {
@@ -82,7 +83,7 @@ const deleteRankForm = async (req, res) => {
 		await user.save();
 		await form.remove();
 
-		return StatusResponse(res, 200, 'Form deleted successfully');
+		return StatusResponse(res, 200, formSuccessMessage.formDeleteSucceess);
 	} catch (error) {
 		return StatusResponse(res, 500);
 	}

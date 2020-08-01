@@ -2,6 +2,12 @@ const RankForm = require('../models/RankForm');
 const User = require('../models/User');
 const StatusResponse = require('../util/statusResponse');
 
+const {
+	authErrorMessage,
+	authSuccessMessage,
+	genericErrorMessage
+} = require('./responseStrings');
+
 const getUserById = async (req, res) => {
 	const userId = req.params.userId;
 	try {
@@ -15,7 +21,7 @@ const getUserById = async (req, res) => {
 		];
 
 		if (!user) {
-			return StatusResponse(res, 404, 'Unable to locate user.');
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
 		}
 		const response = {
 			user,
@@ -36,11 +42,7 @@ const updateUser = async (req, res) => {
 		const user = await User.findOne({ _id: userId });
 
 		if (update.password && update.password.length < 6) {
-			return StatusResponse(
-				res,
-				400,
-				'Password must be at least 6 characters.'
-			);
+			return StatusResponse(res, 400, authErrorMessage.invalidPassword);
 		}
 
 		if (update.password) {
@@ -57,16 +59,12 @@ const updateUser = async (req, res) => {
 		return StatusResponse(
 			res,
 			200,
-			'User details updated successfully.',
+			authSuccessMessage.userUpdateSuccess,
 			user
 		);
 	} catch (error) {
 		if (error.code === 11000) {
-			return StatusResponse(
-				res,
-				400,
-				'A user exists with that email, please try another one.'
-			);
+			return StatusResponse(res, 400, authErrorMessage.emailInUse);
 		}
 
 		return StatusResponse(res, 500);
@@ -81,7 +79,7 @@ const deleteUser = async (req, res) => {
 
 		await RankForm.deleteMany({ _id: { $in: user.rankForms } });
 		await user.deleteOne();
-		return StatusResponse(res, 200, 'User deleted successfully.');
+		return StatusResponse(res, 200, authSuccessMessage.userDeleteSuccess);
 	} catch (error) {
 		return StatusResponse(res, 500);
 	}

@@ -6,17 +6,18 @@ const {
 	forgotPassword,
 	resetPassword
 } = require('../controllers/authControllers');
+const { authRoute } = require('./routeStrings');
 
 // register
-router.post('/register', register);
+router.post(authRoute.register, register);
 
 //login
-router.post('/login', login);
+router.post(authRoute.login, login);
 
 //forgotpassword
-router.post('/forgotpassword', forgotPassword);
+router.post(authRoute.forgotPassword, forgotPassword);
 
 //resetpassword
-router.put('/resetpassword/:resetToken', resetPassword);
+router.put(authRoute.resetPassword, resetPassword);
 
 module.exports = router;

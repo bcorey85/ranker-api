@@ -26,8 +26,8 @@ app.use(
 );
 app.use(hpp());
 
-app.use('/auth', authRoutes);
-app.use('/users', userRoutes);
-app.use('/rank', rankRoutes);
+app.use(authRoutes);
+app.use(userRoutes);
+app.use(rankRoutes);
 
 module.exports = { app };

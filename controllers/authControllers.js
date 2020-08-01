@@ -3,7 +3,11 @@ const crypto = require('crypto');
 
 const { sendPasswordResetEmail } = require('../util/sendEmail');
 const StatusResponse = require('../util/statusResponse');
-const { authErrorMessage } = require('../errors/errorStrings');
+const {
+	authErrorMessage,
+	authSuccessMessage,
+	genericErrorMessage
+} = require('./responseStrings');
 
 const register = async (req, res) => {
 	const { username, email, password } = req.body;
@@ -28,7 +32,7 @@ const register = async (req, res) => {
 		return StatusResponse(
 			res,
 			201,
-			'Your account has been created successfully',
+			authSuccessMessage.accountCreated,
 			payload
 		);
 	} catch (error) {
@@ -47,6 +51,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
 	const { email, password } = req.body;
 
+	if (!email || !password) {
+		return StatusResponse(res, 400, genericErrorMessage.invalidCredentials);
+	}
+
 	try {
 		const user = await User.login(email, password);
 
@@ -59,7 +67,12 @@ const login = async (req, res) => {
 			token: user.token
 		};
 
-		return StatusResponse(res, 200, 'Login successful', payload);
+		return StatusResponse(
+			res,
+			200,
+			authSuccessMessage.loginSuccess,
+			payload
+		);
 	} catch (error) {
 		console.log(error);
 		return StatusResponse(res, 500);
@@ -73,7 +86,7 @@ const forgotPassword = async (req, res) => {
 		const user = await User.findOne({ email });
 
 		if (!user) {
-			return StatusResponse(res, 404, authErrorMessage.invalidEmail);
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
 		}
 		const resetToken = user.generateResetPasswordToken();
 		await user.save();
@@ -81,7 +94,11 @@ const forgotPassword = async (req, res) => {
 			.FRONTEND_URL}/resetpassword/${resetToken}`;
 
 		await sendPasswordResetEmail(user.email, resetLink);
-		return StatusResponse(res, 200, 'Password reset request complete.');
+		return StatusResponse(
+			res,
+			200,
+			authSuccessMessage.passwordRequestSuccess
+		);
 	} catch (error) {
 		console.log(error);
 		return StatusResponse(res, 500);
@@ -109,11 +126,7 @@ const resetPassword = async (req, res) => {
 		});
 
 		if (!user) {
-			return StatusResponse(
-				res,
-				400,
-				authErrorMessage.invalidPasswordResetRequest
-			);
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
 		}
 
 		user.password = password;
@@ -128,7 +141,12 @@ const resetPassword = async (req, res) => {
 			token: response.token
 		};
 
-		return StatusResponse(res, 200, 'Password change complete.', payload);
+		return StatusResponse(
+			res,
+			200,
+			authSuccessMessage.passwordResetComplete,
+			payload
+		);
 	} catch (error) {
 		console.log(error);
 		return StatusResponse(res, 500);
