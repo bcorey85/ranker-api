@@ -19,7 +19,9 @@ const authSuccessMessage = {
 };
 
 const formErrorMessage = {
-	formMissingError: 'Please submit a form to save.'
+	formMissingError: 'Please submit a form to save.',
+	formDateMissing: 'Please add a date to your form',
+	formTitleMissing: 'Please add a title to your form'
 };
 
 const formSuccessMessage = {

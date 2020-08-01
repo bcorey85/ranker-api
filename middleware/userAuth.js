@@ -19,7 +19,7 @@ const userAuth = async (req, res, next) => {
 		const user = await User.findOne({ _id: decoded.id });
 
 		if (!user) {
-			return StatusResponse(res, 404, 'Invalid credentials');
+			return StatusResponse(res, 401);
 		}
 
 		req.token = token;

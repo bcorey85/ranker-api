@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { formErrorMessage } = require('../controllers/responseStrings');
 
 const scoreSchema = new mongoose.Schema({
 	id: String,
@@ -28,11 +29,11 @@ const scoreLabelSchema = new mongoose.Schema({
 const rankFormSchema = new mongoose.Schema({
 	date: {
 		type: String,
-		required: [ true, 'Please add a date to your form.' ]
+		required: [ true, formErrorMessage.formDateMissing ]
 	},
 	title: {
 		type: String,
-		required: [ true, 'Please add a title to your form.' ]
+		required: [ true, formErrorMessage.formTitleMissing ]
 	},
 	category: {
 		type: String

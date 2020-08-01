@@ -25,8 +25,6 @@ const createRankForm = async (req, res) => {
 
 		return StatusResponse(res, 201, formSuccessMessage.formSaveSuccess);
 	} catch (error) {
-		console.log(error);
-
 		if (error.errors) {
 			const errors = Object.keys(error.errors);
 			const messages = errors.map(e => {
@@ -50,6 +48,10 @@ const updateRankForm = async (req, res) => {
 		formUpdate.category = 'Misc';
 	}
 
+	if (!formUpdate.items || !formUpdate.items.length > 0) {
+		return StatusResponse(res, 400, formErrorMessage.formMissingError);
+	}
+
 	try {
 		await RankForm.findOneAndUpdate({ _id: rankFormId }, formUpdate, {
 			runValidators: true
@@ -57,7 +59,6 @@ const updateRankForm = async (req, res) => {
 
 		return StatusResponse(res, 200, formSuccessMessage.formUpdateSuccess);
 	} catch (error) {
-		console.log(error);
 		if (error.errors) {
 			const errors = Object.keys(error.errors);
 			const messages = errors.map(e => {
