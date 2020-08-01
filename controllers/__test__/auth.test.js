@@ -7,6 +7,7 @@ const {
 	genericErrorMessage
 } = require('../responseStrings');
 const { authRoute } = require('../../routes/routeStrings');
+const { sendPasswordResetEmail } = require('../../util/sendEmail');
 
 describe('User Register', () => {
 	it('creates a new user if valid email and password provided', async () => {
@@ -192,7 +193,33 @@ describe('Login', () => {
 });
 
 describe('Forgot Password', () => {
-	it.todo('sends email if successful request is made');
+	it('sends email if successful request is made', async () => {
+		const user = {
+			username: 'test',
+			email: 'bcorey85@gmail.com',
+			password: '123456'
+		};
+
+		const newUser = new User(user);
+		await newUser.save();
+
+		const resetRequest = {
+			email: 'bcorey85@gmail.com'
+		};
+
+		const res = await request(app)
+			.post(authRoute.forgotPassword)
+			.send(resetRequest)
+			.expect(200);
+
+		expect(res.body.message).toEqual(
+			authSuccessMessage.passwordRequestSuccess
+		);
+		expect(sendPasswordResetEmail).toHaveBeenCalled();
+		expect(sendPasswordResetEmail.mock.calls[0][0]).toEqual(
+			resetRequest.email
+		);
+	});
 
 	it('throws error if user not found', async () => {
 		const user = {
@@ -205,8 +232,7 @@ describe('Forgot Password', () => {
 		await newUser.save();
 
 		const resetRequest = {
-			email: 'test2@gmail.com',
-			password: '123456'
+			email: 'test2@gmail.com'
 		};
 
 		const res = await request(app)
@@ -219,7 +245,40 @@ describe('Forgot Password', () => {
 });
 
 describe('Reset Password', () => {
-	it.todo('resets password if token and valid password provided');
+	it('resets password if token and valid password provided', async () => {
+		const user = {
+			username: 'test',
+			email: 'test@gmail.com',
+			password: '123456'
+		};
+
+		const newUser = new User(user);
+		newUser.passwordResetToken = newUser.generateResetPasswordToken();
+		await newUser.save();
+
+		const newPasswordRequest = {
+			password: '234567',
+			confirmPassword: '234567'
+		};
+
+		const res = await request(app)
+			.put(`${authRoute.resetPasswordRoot}/${newUser.passwordResetToken}`)
+			.send(newPasswordRequest)
+			.expect(200);
+
+		expect(res.body.message).toEqual(
+			authSuccessMessage.passwordResetComplete
+		);
+
+		const updatedUser = await User.findOne({ email: user.email });
+
+		const loginSuccess = await User.login(
+			updatedUser.email,
+			newPasswordRequest.password
+		);
+
+		expect(loginSuccess._id).toEqual(updatedUser._id);
+	});
 
 	it('throws error if user not found', async () => {
 		const user = {

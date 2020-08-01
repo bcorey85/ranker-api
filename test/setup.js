@@ -1,6 +1,8 @@
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 
+jest.mock('../util/sendEmail');
+
 let mongo;
 beforeAll(async () => {
 	jest.clearAllMocks();
