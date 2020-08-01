@@ -3,10 +3,19 @@ const crypto = require('crypto');
 
 const { sendPasswordResetEmail } = require('../util/sendEmail');
 const StatusResponse = require('../util/statusResponse');
+const { authErrorMessage } = require('../errors/errorStrings');
 
 const register = async (req, res) => {
 	const { username, email, password } = req.body;
 	try {
+		const existingEmail = await User.findOne({ email });
+		const existingUsername = await User.findOne({ username });
+		if (existingEmail) {
+			return StatusResponse(res, 400, authErrorMessage.emailInUse);
+		}
+		if (existingUsername) {
+			return StatusResponse(res, 400, authErrorMessage.usernameInUse);
+		}
 		const newUser = new User({ username, email, password });
 		await newUser.save();
 
@@ -31,26 +40,6 @@ const register = async (req, res) => {
 			return StatusResponse(res, 400, messages);
 		}
 
-		if (error.code === 11000) {
-			const usernameError = error.errmsg.match(/username/);
-			const emailError = error.errmsg.match(/email/);
-
-			if (usernameError) {
-				return StatusResponse(
-					res,
-					400,
-					'That username is taken, please try another one.'
-				);
-			}
-
-			if (emailError) {
-				return StatusResponse(
-					res,
-					400,
-					'A user exists with that email, please try another one.'
-				);
-			}
-		}
 		return StatusResponse(res, 500);
 	}
 };
@@ -84,7 +73,7 @@ const forgotPassword = async (req, res) => {
 		const user = await User.findOne({ email });
 
 		if (!user) {
-			return StatusResponse(res, 404, 'Please check the provided email.');
+			return StatusResponse(res, 404, authErrorMessage.invalidEmail);
 		}
 		const resetToken = user.generateResetPasswordToken();
 		await user.save();
@@ -104,7 +93,7 @@ const resetPassword = async (req, res) => {
 	const { resetToken } = req.params;
 
 	if (password !== confirmPassword) {
-		return StatusResponse(res, 400, 'Passwords do not match.');
+		return StatusResponse(res, 400, authErrorMessage.passwordNotMatch);
 	}
 
 	const resetPasswordToken = crypto
@@ -123,7 +112,7 @@ const resetPassword = async (req, res) => {
 			return StatusResponse(
 				res,
 				400,
-				'Invalid request. Please request a new password reset email.'
+				authErrorMessage.invalidPasswordResetRequest
 			);
 		}
 

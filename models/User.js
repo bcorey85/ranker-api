@@ -2,34 +2,32 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { authErrorMessage } = require('../errors/errorStrings');
 
 const userSchema = new mongoose.Schema({
 	username: {
 		type: String,
-		required: [ true, 'Please enter a username' ],
+		required: [ true, authErrorMessage.invalidUsername ],
 		unique: true,
 		index: true,
 		trim: true
 	},
 	email: {
 		type: String,
-		required: [ true, 'Please enter a valid email.' ],
+		required: [ true, authErrorMessage.invalidEmail ],
 		unique: true,
 		index: true,
 		trim: true,
 		match: [
 			/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-			'Please enter a valid email.'
+			authErrorMessage.invalidEmail
 		]
 	},
 	password: {
 		type: String,
-		required: [
-			true,
-			'Please enter a password with at least 6 characters.'
-		],
+		required: [ true, authErrorMessage.invalidPassword ],
 		trim: true,
-		minlength: [ 6, 'Please enter a password with at least 6 characters.' ],
+		minlength: [ 6, authErrorMessage.invalidPassword ],
 		select: false
 	},
 	rankForms: [ { type: mongoose.Types.ObjectId, ref: 'RankForm' } ],
