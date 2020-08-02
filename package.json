@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "env-cmd -f ./config/dev.env nodemon index.js",
-		"test": "env-cmd -f ./config/dev.env jest --watchAll",
+		"test": "env-cmd -f ./config/dev.env jest --watch",
 		"start": "node index.js"
 	},
 	"author": "brandon corey",

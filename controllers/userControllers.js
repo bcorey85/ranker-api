@@ -16,13 +16,14 @@ const getUserById = async (req, res) => {
 			model: 'RankForm'
 		});
 
+		if (!user) {
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
+		}
+
 		const categories = [
 			...new Set(user.rankForms.map(form => form.category))
 		];
 
-		if (!user) {
-			return StatusResponse(res, 404, genericErrorMessage.notFound);
-		}
 		const response = {
 			user,
 			categories
@@ -40,6 +41,10 @@ const updateUser = async (req, res) => {
 
 	try {
 		const user = await User.findOne({ _id: userId });
+
+		if (!user) {
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
+		}
 
 		if (update.password && update.password.length < 6) {
 			return StatusResponse(res, 400, authErrorMessage.invalidPassword);
@@ -75,6 +80,7 @@ const updateUser = async (req, res) => {
 			});
 			return StatusResponse(res, 400, messages);
 		}
+		console.error(error);
 		return StatusResponse(res, 500);
 	}
 };
@@ -84,6 +90,10 @@ const deleteUser = async (req, res) => {
 
 	try {
 		const user = await User.findOne({ _id: userId });
+
+		if (!user) {
+			return StatusResponse(res, 404, genericErrorMessage.notFound);
+		}
 
 		await RankForm.deleteMany({ _id: { $in: user.rankForms } });
 		await user.deleteOne();
