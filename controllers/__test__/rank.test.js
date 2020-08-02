@@ -3,31 +3,13 @@ const User = require('../../models/User');
 const request = require('supertest');
 const { app } = require('../../app');
 const {
-	authErrorMessage,
-	authSuccessMessage,
 	genericErrorMessage,
 	formSuccessMessage,
 	formErrorMessage
 } = require('../responseStrings');
 const { rankRoute } = require('../../routes/routeStrings');
 const { rankForm } = require('../../test/fixtures/rankFormSchemas');
-
-const login = async () => {
-	const credentials = {
-		username: 'test',
-		email: 'test@gmail.com',
-		password: '123456'
-	};
-	const newUser = await new User(credentials);
-	await newUser.save();
-
-	const token = await newUser.generateAuthToken();
-
-	return {
-		userId: newUser._id,
-		token
-	};
-};
+const { login } = require('../../test/fixtures/login');
 
 describe('Create Rankform', () => {
 	it('creates a form and adds to user if valid request made', async () => {
@@ -55,6 +37,7 @@ describe('Create Rankform', () => {
 			.post(rankRoute.root)
 			.send(rankForm)
 			.expect(401);
+
 		expect(res.body.message).toEqual(
 			genericErrorMessage.invalidCredentials
 		);
@@ -71,7 +54,9 @@ describe('Create Rankform', () => {
 		const res = await request(app)
 			.post(rankRoute.root)
 			.set('Authorization', `Bearer ${token}`)
-			.send(newForm);
+			.send(newForm)
+			.expect(400);
+
 		expect(res.body.message).toEqual(formErrorMessage.formMissingError);
 
 		const forms = await RankForm.find({});
@@ -86,7 +71,9 @@ describe('Create Rankform', () => {
 		const res = await request(app)
 			.post(rankRoute.root)
 			.set('Authorization', `Bearer ${token}`)
-			.send(newForm);
+			.send(newForm)
+			.expect(400);
+
 		expect(res.body.message[0]).toEqual(formErrorMessage.formDateMissing);
 
 		const forms = await RankForm.find({});
@@ -101,7 +88,9 @@ describe('Create Rankform', () => {
 		const res = await request(app)
 			.post(rankRoute.root)
 			.set('Authorization', `Bearer ${token}`)
-			.send(newForm);
+			.send(newForm)
+			.expect(400);
+
 		expect(res.body.message[0]).toEqual(formErrorMessage.formTitleMissing);
 
 		const forms = await RankForm.find({});
@@ -246,7 +235,7 @@ describe('Delete Rankform', () => {
 			.send()
 			.expect(200);
 
-		expect(res.body.message).toEqual(formSuccessMessage.formDeleteSucceess);
+		expect(res.body.message).toEqual(formSuccessMessage.formDeleteSuccess);
 
 		const originalForm = await RankForm.findOne({ _id: formId });
 		expect(originalForm).toEqual(null);

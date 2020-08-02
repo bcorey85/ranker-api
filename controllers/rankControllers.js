@@ -44,12 +44,12 @@ const updateRankForm = async (req, res) => {
 	const formUpdate = req.body;
 	const { rankFormId } = req.params;
 
-	if (!formUpdate.category) {
-		formUpdate.category = 'Misc';
-	}
-
 	if (!formUpdate.items || !formUpdate.items.length > 0) {
 		return StatusResponse(res, 400, formErrorMessage.formMissingError);
+	}
+
+	if (!formUpdate.category) {
+		formUpdate.category = 'Misc';
 	}
 
 	try {
@@ -84,7 +84,7 @@ const deleteRankForm = async (req, res) => {
 		await user.save();
 		await form.remove();
 
-		return StatusResponse(res, 200, formSuccessMessage.formDeleteSucceess);
+		return StatusResponse(res, 200, formSuccessMessage.formDeleteSuccess);
 	} catch (error) {
 		return StatusResponse(res, 500);
 	}

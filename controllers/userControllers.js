@@ -45,6 +45,12 @@ const updateUser = async (req, res) => {
 			return StatusResponse(res, 400, authErrorMessage.invalidPassword);
 		}
 
+		const existingEmail = await User.findOne({ email: update.email });
+
+		if (existingEmail) {
+			return StatusResponse(res, 400, authErrorMessage.emailInUse);
+		}
+
 		if (update.password) {
 			user.password = update.password;
 		}
@@ -52,7 +58,6 @@ const updateUser = async (req, res) => {
 		if (update.email) {
 			user.email = update.email;
 		}
-		console.log(user);
 
 		await user.save();
 
@@ -63,10 +68,13 @@ const updateUser = async (req, res) => {
 			user
 		);
 	} catch (error) {
-		if (error.code === 11000) {
-			return StatusResponse(res, 400, authErrorMessage.emailInUse);
+		if (error.errors) {
+			const errors = Object.keys(error.errors);
+			const messages = errors.map(e => {
+				return error.errors[e].message;
+			});
+			return StatusResponse(res, 400, messages);
 		}
-
 		return StatusResponse(res, 500);
 	}
 };

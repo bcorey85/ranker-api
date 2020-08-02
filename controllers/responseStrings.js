@@ -27,7 +27,7 @@ const formErrorMessage = {
 const formSuccessMessage = {
 	formSaveSuccess: 'Form saved successfully.',
 	formUpdateSuccess: 'Form updated successfully',
-	formDeleteSucceess: 'Form deleted successfully'
+	formDeleteSuccess: 'Form deleted successfully'
 };
 
 const genericErrorMessage = {
