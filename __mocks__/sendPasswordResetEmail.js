@@ -1,9 +1,9 @@
-const adminEmailAccount = 'bcorey85@gmail.com';
+const adminEmailAccount = 'ranker.bc@gmail.com';
 
 const sendPasswordResetEmail = jest
 	.fn()
 	.mockImplementation((email, resetLink) => {
-		return resetMsg = {
+		return (resetMsg = {
 			to: email,
 			from: `Ranker App <${adminEmailAccount}>`,
 			subject: 'Ranker App - Reset Password Link',

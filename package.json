@@ -1,15 +1,15 @@
 {
 	"name": "ranker-api",
 	"version": "1.0.0",
-	"description": "",
+	"description": "A Simple App For Ranking Stuff",
+	"homepage": "https://ranker.netlify.app/",
+	"author": "Brandon Corey <brandon@bcdev.co> (www.bcdev.co)",
 	"main": "index.js",
 	"scripts": {
 		"dev": "env-cmd -f ./config/dev.env nodemon index.js",
 		"test": "env-cmd -f ./config/dev.env jest --watch",
 		"start": "node index.js"
 	},
-	"author": "brandon corey",
-	"license": "ISC",
 	"dependencies": {
 		"@sendgrid/mail": "^7.2.2",
 		"bcryptjs": "^2.4.3",
