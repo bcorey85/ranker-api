@@ -52,7 +52,7 @@ const updateUser = async (req, res) => {
 
 		const existingEmail = await User.findOne({ email: update.email });
 
-		if (existingEmail) {
+		if (update.email !== user.email && existingEmail) {
 			return StatusResponse(res, 400, authErrorMessage.emailInUse);
 		}
 
